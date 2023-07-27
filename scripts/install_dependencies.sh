@@ -1,13 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 BINUTILS_VERSION=2.39
 GCC_VERSION=12.2.0
-
-DIR="$( cd "$( dirname "$0" )" && pwd )"
+WORKING_DIR=$1
 
 # Define environment variables
 
-export PREFIX="${DIR}/cross"
+export PREFIX="${WORKING_DIR}/cross"
 export TARGET=x86_64
 
 # Install compilers etc.

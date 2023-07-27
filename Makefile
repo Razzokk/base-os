@@ -14,14 +14,6 @@ KERNEL_C_SRC_FILES := $(shell find kernel/ -name *.c)
 KERNEL_ASM_OBJ_FILES := $(patsubst kernel/%.asm, build/kernel/%.o, $(KERNEL_ASM_SRC_FILES))
 KERNEL_C_OBJ_FILES := $(patsubst kernel/%.c, build/kernel/%.o, $(KERNEL_C_SRC_FILES))
 
-$(KERNEL_ASM_OBJ_FILES): build/%.o : %.asm
-	mkdir -p $(dir $@) && \
-	nasm -o $@ $< -f elf64
-
-$(KERNEL_C_OBJ_FILES): build/%.o : %.c
-	mkdir -p $(dir $@) && \
-	$(CC) -o $@ -c $< -I kernel/include -I libc/include $(CFLAGS)
-
 # Targets
 .PHONY: all clean build
 .SUFFIXES: .asm .c .o .ld
@@ -37,3 +29,11 @@ build: $(KERNEL_ASM_OBJ_FILES) $(KERNEL_C_OBJ_FILES) cfg/linker.ld
 	cp cfg/grub.cfg build/boot/grub/ && \
 	rm -f build/$(ISO_FILENAME).iso
 	grub-mkrescue /usr/lib/grub/i386-pc -o build/$(ISO_FILENAME).iso build
+
+$(KERNEL_ASM_OBJ_FILES): build/%.o : %.asm
+	mkdir -p $(dir $@) && \
+	nasm -o $@ $< -f elf64
+
+$(KERNEL_C_OBJ_FILES): build/%.o : %.c
+	mkdir -p $(dir $@) && \
+	$(CC) -o $@ -c $< -I kernel/include -I libc/include $(CFLAGS)

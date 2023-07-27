@@ -1,2 +1,6 @@
 build/
 cross/
+serial.log
+
+.idea/
+.vscode/

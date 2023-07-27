@@ -1,20 +1,39 @@
+#include <stdint.h>
 #include <stdbool.h>
 #include "kdefs.h"
+#include "tbuf.h"
 
-extern void setup();
-extern void loop();
+const char LOGO[] =
+"___  ____ ____ ____    ____ ____\n"
+"|__] |__| [__  |___    |  | [__ \n"
+"|__] |  | ___] |___    |__| ___]\n";
+
+void print_logo()
+{
+	const char *logo_ptr = LOGO;
+	char c = *logo_ptr;
+	uint8_t row = 0;
+	uint8_t col = 0;
+
+	while (c != 0)
+	{
+		if (c == '\n')
+		{
+			++row;
+			col = 0;
+		}
+		else
+		{
+			tbuf_put(row, col, c, LIGHT_GREEN, BLACK);
+			++col;
+		}
+		++logo_ptr;
+		c = *logo_ptr;
+	}
+}
 
 void kmain()
 {
-    setup();
-
-    // Really rough approx.
-    // io_delay has ~ 1-4 microsecond delay
-    size_t microseconds_delay = 500000;
-
-    while (true)
-    {
-        loop();
-        for (size_t i = 0; i < microseconds_delay; i++) io_delay();
-    }
+	tbuf_clear();
+	print_logo();
 }
