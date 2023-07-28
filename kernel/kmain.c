@@ -1,40 +1,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "kdefs.h"
-#include "tbuf.h"
 #include "misc.h"
+#include "terminal.h"
 
 const char LOGO[] =
 "___  ____ ____ ____    ____ ____\n"
 "|__] |__| [__  |___    |  | [__ \n"
 "|__] |  | ___] |___    |__| ___] v" XSTRINGIFY(OS_VERSION) "\n";
 
-void print_logo()
-{
-	const char *logo_ptr = LOGO;
-	char c = *logo_ptr;
-	uint8_t row = 0;
-	uint8_t col = 0;
-
-	while (c != 0)
-	{
-		if (c == '\n')
-		{
-			++row;
-			col = 0;
-		}
-		else
-		{
-			tbuf_put(row, col, c, LIGHT_GREEN, BLACK);
-			++col;
-		}
-		++logo_ptr;
-		c = *logo_ptr;
-	}
-}
+terminal_t terminal;
 
 void kmain()
 {
-	tbuf_clear();
-	print_logo();
+	term_init(&terminal);
+	term_clear(&terminal);
+	term_putstr(&terminal, LOGO, sizeof(LOGO));
 }
