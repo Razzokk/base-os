@@ -1,6 +1,6 @@
 #include "tbuf.h"
 
-#include "kdefs.h"
+#include <string.h>
 
 tbuf_char* const text_buffer = (tbuf_char* const) TEXT_BUF_ADDR;
 

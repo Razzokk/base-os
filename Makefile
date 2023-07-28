@@ -1,5 +1,6 @@
 # Compiler flags
-CFLAGS := -std=gnu99 -ffreestanding -O0 -Wall -Wextra
+OS_VERSION := 0.1.0
+CFLAGS := -std=gnu99 -ffreestanding -O0 -Wall -Wextra -D OS_VERSION=$(OS_VERSION)
 LINKFLAGS := -nostdlib -lgcc -z max-page-size=4096 $(CFLAGS)
 
 # Compilers

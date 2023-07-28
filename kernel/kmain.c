@@ -2,11 +2,12 @@
 #include <stdbool.h>
 #include "kdefs.h"
 #include "tbuf.h"
+#include "misc.h"
 
 const char LOGO[] =
 "___  ____ ____ ____    ____ ____\n"
 "|__] |__| [__  |___    |  | [__ \n"
-"|__] |  | ___] |___    |__| ___]\n";
+"|__] |  | ___] |___    |__| ___] v" XSTRINGIFY(OS_VERSION) "\n";
 
 void print_logo()
 {

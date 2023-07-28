@@ -29,6 +29,8 @@ To install all the required tools for building run the provided shell scripts (t
 
 ### Windows (powershell)
 
+You need to have WSL 2 enabled and a distro installed (suggested: [Ubuntu 22.04](https://apps.microsoft.com/store/detail/ubuntu-22042-lts/9PN20MSR04DW?hl=de-at&gl=at&rtc=1))
+
 ```ps1
 .\bos[.ps1] setup
 ```
@@ -65,6 +67,7 @@ You should than get a `build` directory in the root directory and in it an ISO f
 
 - [ ] I/O with `outb` and `inb` instructions
 - [ ] Adjusting colors in text mode
+- [ ] Printing functions
 - [ ] `rdtsc` instruction wrapper
 - [ ] Simple kernel memory management (`kmalloc`)
 - [ ] Simple pseudo random number generator ([linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator))
