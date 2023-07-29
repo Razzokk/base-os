@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -13,6 +14,8 @@ extern "C" {
 
 // Returns the length of the resulting string, excluding the null byte
 size_t ulltoa(unsigned long long value, char* buffer, int base);
+
+uint64_t rdtsc();
 
 #ifdef __cplusplus
 }
