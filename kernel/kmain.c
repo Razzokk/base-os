@@ -1,22 +1,67 @@
-#include <stdint.h>
-#include <stdbool.h>
 #include "kdefs.h"
 #include "terminal.h"
 #include "misc.h"
 #include "debug.h"
+#include "colors.h"
 
 const char LOGO[] =
-"___  ____ ____ ____    ____ ____\n"
-"|__] |__| [__  |___    |  | [__ \n"
-"|__] |  | ___] |___    |__| ___] v" XSTRINGIFY(OS_VERSION) "\n";
+"  ______   ______   ______    \n"
+" /\\  == \\ /\\  __ \\ /\\  ___\\   \n"
+" \\ \\  __< \\ \\ \\/\\ \\\\ \\___  \\  \n"
+"  \\ \\_____\\\\ \\_____\\\\/\\_____\\ \n"
+"   \\/_____/ \\/_____/ \\/_____/ v" XSTRINGIFY(OS_VERSION) "\n\n";
 
 terminal_t terminal;
+
+void init_color_palette()
+{
+	set_color_palette(BLACK, 0x2D2727);
+	set_color_palette(BLUE, 0x11009E);
+	set_color_palette(GREEN, 0x377D71);
+	set_color_palette(CYAN, 0x5B8FB9);
+	set_color_palette(RED, 0xCB1C8D);
+	set_color_palette(MAGENTA, 0x6527BE);
+	set_color_palette(BROWN, 0xFBB454);
+	set_color_palette(WHITE, 0xECC9EE);
+	set_color_palette(GRAY, 0x413543);
+	set_color_palette(LIGHT_BLUE, 0x4942E4);
+	set_color_palette(LIGHT_GREEN, 0xB6EADA);
+	set_color_palette(LIGHT_CYAN, 0x46C2CB);
+	set_color_palette(LIGHT_RED, 0xFB2576);
+	set_color_palette(LIGHT_MAGENTA, 0x8F43EE);
+	set_color_palette(YELLOW, 0xF0EB8D);
+	set_color_palette(BRIGHT_WHITE, 0xFDE2F3);
+}
+
+void print_colors()
+{
+	term_putliteral(&terminal, "Available colors:\n\n");
+
+	for (uint8_t color = 0; color < 8; ++color)
+	{
+		term_set_bg(&terminal, color);
+		term_putliteral(&terminal, "  ");
+	}
+
+	term_putliteral(&terminal, "\n");
+
+	for (uint8_t color = 8; color < 16; ++color)
+	{
+		term_set_bg(&terminal, color);
+		term_putliteral(&terminal, "  ");
+	}
+}
 
 void kmain()
 {
 	term_init(&terminal);
 	term_clear(&terminal);
+
+	init_color_palette();
 	term_putstr(&terminal, LOGO, sizeof(LOGO));
+
+	term_putchar(&terminal, '\n');
+	print_colors();
 
 	debug_literal("[\x1b[33mDEBUG\x1b[m]: print some useful information for debugging here\n");
 }
