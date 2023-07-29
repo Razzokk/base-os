@@ -55,6 +55,7 @@ docker_run()
 
 	docker run \
 		-v "$base_dir:$target_dir" \
+		--rm \
 		-it "$docker_image" \
 		"$@"
 }
