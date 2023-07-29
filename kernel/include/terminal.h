@@ -8,6 +8,9 @@
 extern "C" {
 #endif
 
+// Only use this for string literals, else the outcome will probably be unexpected
+#define term_putliteral(terminal, str) term_putstr(terminal, str, sizeof(str))
+
 // Bright colors have the 4th bit set compared to the normal ones
 typedef enum
 {

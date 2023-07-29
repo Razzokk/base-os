@@ -63,14 +63,50 @@ or just simply chain them together:
 
 You should than get a `build` directory in the root directory and in it an ISO file called `base_os.iso` which is the file that gets executed by **QEMU**.
 
+## Debugging
+
+For debugging purposes functions/defines inside the [debug.h](./kernel/include/debug.h) header can be used:
+
+Single characters, though this is more or less used for the other functions:
+
+```c
+debug_char(<your_char>);
+```
+String, here you have to specify the maximal length of the string.
+Printing also ends when a null byte is hit:
+
+```c
+debug(<your_string>, <string_length>);
+```
+
+And for convenient reasons a wrapper around `debug` for string literals so that you don't have to specify the string length:
+
+```c
+debug_literal(<your_string_literal>);
+```
+
+Now by default everything that is printed via the debug functions/defines goes to `stdout` over port `0xE9` defined in the debug header.
+This can however be changed to log debug into a `serial.log` file inside the root directory by setting the `DEBUG_PORT` define inside the debug header to `COM1_PORT` which has the value `0x3F8`.
+
+**TIP**: To make your debug statements a bit more expressive in the log use [ANSI Escape Codes](https://en.wikipedia.org/wiki/ANSI_escape_code) to color them (this however only makes sense when you print to stdout):
+
+```c
+debug_literal("[\x1b[33mDEBUG\x1b[m]: print some useful information for debugging here\n");
+```
+
+produces:
+
+<code>[<span style="color: #C19C00">DEBUG</span>]: print some useful information for debugging here</code>
+
 ## Planned
 
-- [ ] I/O with `outb` and `inb` instructions
-- [ ] Adjusting colors in text mode
-- [ ] Printing functions
+- [x] I/O with `outb` and `inb` instructions
+- [x] Debug printing over stdout (requires I/O)
+- [ ] Adjusting colors in text mode (requires I/O)
+- [x] Printing functions
 - [ ] `rdtsc` instruction wrapper
 - [ ] Simple kernel memory management (`kmalloc`)
 - [ ] Simple pseudo random number generator ([linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator))
 - [ ] Simple interrupts with [PIC](https://wiki.osdev.org/8259_PIC) (timer and keyboard interrupts, requires I/O)
 - [ ] Simple lock (spin-lock, with `xchg` instruction)
-- [ ] Debug printing over stdout (requires I/O)
+- [ ] Use docker image for building
