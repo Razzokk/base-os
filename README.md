@@ -17,39 +17,40 @@ You can type
 
 to get an overview of which commands are available.
 
-## Installation
+Alternatively on Windows the [bos.ps1](./bos.ps1) script (note that this requires bash and/or wsl to work properly as it basically executes the command with wsl) can be used and is executed like this:
 
-To install all the required tools for building run the provided shell scripts (this step can take quiet a while...):
+```shell
+.\bos.ps1 help
+```
 
-### Linux (bash)
+(Note that the ps1 could be omitted here)
+
+## Setup
+
+The two main components to build and run everything are [Docker](https://www.docker.com/) and [QEMU](https://www.qemu.org/), so make sure you have these two installed on your machine.
+It is important that the `qemu-system-x86_64` component is installed since this OS template runs and compiles on x86_64.
+Base OS uses a docker image specified by the [Dockerfile](./toolchain/Dockerfile) and its corresponding [install script](./toolchain/build-toolchain.sh).
+This docker image contains everything required to build the OS.
+
+To initially set the docker image up to build and run the OS simply type:
 
 ```shell
 ./bos setup
 ```
 
-### Windows (powershell)
-
-You need to have WSL 2 enabled and a distro installed (suggested: [Ubuntu 22.04](https://apps.microsoft.com/store/detail/ubuntu-22042-lts/9PN20MSR04DW?hl=de-at&gl=at&rtc=1))
-
-```ps1
-.\bos[.ps1] setup
-```
-
-Here `[.ps1]` means it is optional.
-
-Then make sure to install [QEMU](https://www.qemu.org/).
-It is important that the `qemu-system-x86_64` component is installed since this OS template runs and compiles on x86_64.
+This can take quiet a while as it sets up the gcc cross-compiler as well as binutils for the x86_64-elf target and creates an image called bos-toolchain.
+This image can be run as a container and inside this container you can run all necessary commands to build the operating system.
 
 ## How to build and run
 
-Make sure you followed the steps above for QEMU.
-Then you can build the OS with
+Make sure you followed the steps above of [Installation](#installation).
+Then you can build the OS with:
 
 ```shell
 ./bos make all
 ```
 
-and after that run it with
+and after that run it with:
 
 ```shell
 ./bos qemu
@@ -65,7 +66,35 @@ You should than get a `build` directory in the root directory and in it an ISO f
 
 ## Debugging
 
-For debugging purposes functions/defines inside the [debug.h](./kernel/include/debug.h) header can be used:
+### GDB
+
+The built docker image comes with [**gdb**](https://www.sourceware.org/gdb/documentation/) and a custom .gdbinit file to make the output a little nicer.
+First you have to start qemu in debugging mode:
+
+```shell
+./bos qemu-dbg
+```
+
+This starts the normal qemu instance with the additional arguments `-s -S`.
+`-s` Causes qemu to listen for gdb to connect on port **1234** and `-S` causes it to wait while the connection has not been established yet.
+
+In a separate terminal we can then start **gdb** with the following command:
+
+```shell
+./bos gdb
+```
+
+This should result in something similar to the following prompt when gdb connected to the qemu instance:
+
+```
+Reading symbols from ./build/boot/kernel.bin...
+0x000000000000fff0 in ?? ()
+dbg>
+```
+
+### Debug logging
+
+Additionally, functions/defines inside the [debug.h](./kernel/include/debug.h) header can be used:
 
 Single characters, though this is more or less used for the other functions:
 
@@ -98,15 +127,31 @@ produces:
 
 <code>[<span style="color: #C19C00">DEBUG</span>]: print some useful information for debugging here</code>
 
+## Other script things
+
+You could for example also just type:
+```shell
+./bos run
+```
+This will run the bos-toolchain image as container and you than have access to this instance on the terminal and should get a prompt like this:
+```
+/opt #
+```
+There commands can be executed just as in any normal linux environment.
+For example, to now build the OS you can just type:
+```shell
+make all
+```
+
 ## Planned
 
 - [x] I/O with `outb` and `inb` instructions
 - [x] Debug printing over stdout (requires I/O)
-- [ ] Adjusting colors in text mode (requires I/O)
+- [x] Adjusting colors in text mode (requires I/O)
 - [x] Printing functions
 - [ ] `rdtsc` instruction wrapper
 - [ ] Simple kernel memory management (`kmalloc`)
 - [ ] Simple pseudo random number generator ([linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator))
 - [ ] Simple interrupts with [PIC](https://wiki.osdev.org/8259_PIC) (timer and keyboard interrupts, requires I/O)
 - [ ] Simple lock (spin-lock, with `xchg` instruction)
-- [ ] Use docker image for building
+- [x] Use docker image for building

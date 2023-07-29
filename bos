@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+docker_image="bos-toolchain"
 base_dir="$PWD"
 target_dir="/opt"
 target=x86_64
@@ -16,10 +17,11 @@ add_command()
 }
 
 add_command "help" print_help "Print this help information"
-add_command "setup" setup "Setup the compilers and bin-tools required to build the OS"
+add_command "setup" docker_setup "Setup the docker image required to build the base OS"
+add_command "run" docker_run "Run arbitrary commands in the container or the given arguments"
 add_command "make" make "Run make targets"
-add_command "qemu" qemu "Start the OS in the qemu emulator"
-add_command "qemu-dbg" qemu-dbg "Start the OS in the qemu emulator debugging"
+add_command "qemu" qemu "Start the base OS in the qemu emulator"
+add_command "qemu-dbg" qemu-dbg "Start the base OS in the qemu emulator debugging"
 add_command "gdb" gdb "Start the gdb debugger connecting to the qemu instance"
 
 ### Command declaration end ###
@@ -35,10 +37,31 @@ print_help()
 	done
 }
 
-setup()
+docker_setup()
 {
-	printf "Grab something to eat and drink, this step can take quiet a while...\n"
-	./scripts/install_dependencies.sh $base_dir
+	printf "Grab something to eat and drink, this can take quiet a while...\n"
+	docker build -t "$docker_image" ./toolchain
+}
+
+docker_run()
+{
+	# Check if docker image exists
+	if ! docker image inspect "$docker_image" &> /dev/null
+	then
+		printf "\x1b[91mERROR\x1b[m: the docker image for the build environment has not been set up yet or docker is not running.\n"
+		printf "Run \x1b[95m%s\x1b[m to set up the docker image\n" "setup"
+		return 1
+	fi
+
+	docker run \
+		-v "$base_dir:$target_dir" \
+		-it "$docker_image" \
+		"$@"
+}
+
+make()
+{
+	docker_run "make" "$@"
 }
 
 qemu()
@@ -49,6 +72,11 @@ qemu()
 qemu-dbg()
 {
 	qemu -s -S "$@"
+}
+
+gdb()
+{
+	docker_run gdb ./build/boot/kernel.bin -x ./toolchain/.gdbinit
 }
 
 command=$1
