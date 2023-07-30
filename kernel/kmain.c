@@ -1,7 +1,8 @@
 #include <stdnoreturn.h>
 #include <stdbool.h>
 #include "kdefs.h"
-#include "interrupts.h"
+#include "interrupts/interrupts.h"
+#include "interrupts/pic.h"
 #include "terminal.h"
 #include "misc.h"
 #include "debug.h"
@@ -79,6 +80,8 @@ noreturn void kmain()
 
 	debug_literal("[\x1b[33mDEBUG\x1b[m]: print some useful information for debugging here\n");
 
+	pic_enable_irq(0); // enable timer interrupts
+
 	term_putliteral(&terminal, "\n\nHere a random number: ");
 	size_t len = ulltoa(rand(), buffer, 10);
 	term_set_fg(&terminal, RED);
@@ -86,7 +89,7 @@ noreturn void kmain()
 	term_set_fg(&terminal, LIGHT_GREEN);
 
 	// let's cause a page-fault:
-	*(int*)(0x123456789) = 42;
+//	*(int*)(0x123456789) = 42;
 
 	// We don't return from kmain
 	while (true);

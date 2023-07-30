@@ -1,9 +1,10 @@
-#include "interrupts.h"
+#include "interrupts/interrupts.h"
 
 #include <string.h>
 #include "debug.h"
 #include "misc.h"
-#include "exceptions.h"
+#include "interrupts/exceptions.h"
+#include "interrupts/irq.h"
 
 gate_descriptor idt[NUM_INTERRUPTS] __attribute__((aligned(IDT_ALIGNMENT)));
 
@@ -32,6 +33,7 @@ void setup_interrupts()
 	memset(idt, 0, sizeof(idt));
 
 	setup_exceptions();
+	setup_irqs();
 
 	asm volatile("lidt %[idtr]" :: [idtr]"m"(idtr));
 }
