@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stddef.h>
-#include "io.h"
+#include <sys/io.h>
 
 #ifdef __cplusplus
 extern "C" {
