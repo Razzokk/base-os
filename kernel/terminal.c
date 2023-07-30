@@ -1,6 +1,7 @@
 #include "terminal.h"
 
 #include <string.h>
+#include "misc.h"
 
 void term_init(terminal_t* terminal)
 {
@@ -13,6 +14,8 @@ void term_init(terminal_t* terminal)
 	terminal->foreground = LIGHT_GREEN;
 	terminal->background = BLACK;
 	memset(terminal->buffer, 0, terminal->rows * terminal->cols * sizeof(tbuf_char));
+	hw_cursor_enable(0, 15);
+	hw_cursor_set_pos(0, 0);
 }
 
 void term_clear_row(terminal_t* terminal, size_t row)
@@ -58,6 +61,8 @@ void term_newline(terminal_t* terminal)
 		term_scroll_up(terminal, 1);
 	else
 		++terminal->cursor_row;
+
+	hw_cursor_set_pos(terminal->cursor_row, terminal->cursor_col);
 }
 
 void term_backspace(terminal_t* terminal)
@@ -65,6 +70,7 @@ void term_backspace(terminal_t* terminal)
 	if (terminal->cursor_col == 0) return;
 	--terminal->cursor_col;
 	term_write(terminal, terminal->cursor_row, terminal->cursor_col, ' ');
+	hw_cursor_set_pos(terminal->cursor_row, terminal->cursor_col);
 }
 
 void term_putchar(terminal_t* terminal, char chr)
@@ -86,6 +92,8 @@ void term_putchar(terminal_t* terminal, char chr)
 
 	if (terminal->cursor_col >= terminal->cols)
 		term_newline(terminal);
+
+	hw_cursor_set_pos(terminal->cursor_row, terminal->cursor_col);
 }
 
 void term_putstr(terminal_t* terminal, const char* str, size_t n)

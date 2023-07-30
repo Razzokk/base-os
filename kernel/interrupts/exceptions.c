@@ -160,40 +160,45 @@ __attribute__((interrupt)) void pagefault_handler(const interrupt_frame* frame, 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 
+static inline void set_exception_idt(size_t exception_number, void* handler)
+{
+	set_idt_desc(exception_number, handler, 0x10, 0, GATE_TYPE_TRAP);
+}
+
 void setup_exceptions()
 {
-	set_idt_desc(0, exception_handler_0, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(1, exception_handler_1, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(2, exception_handler_2, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(3, exception_handler_3, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(4, exception_handler_4, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(5, exception_handler_5, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(6, exception_handler_6, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(7, exception_handler_7, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(8, exception_handler_error_code_8, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(9, exception_handler_9, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(10, exception_handler_error_code_10, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(11, exception_handler_error_code_11, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(12, exception_handler_error_code_12, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(13, exception_handler_error_code_13, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(14, pagefault_handler, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(15, exception_handler_15, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(16, exception_handler_16, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(17, exception_handler_error_code_17, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(18, exception_handler_18, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(19, exception_handler_19, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(20, exception_handler_20, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(21, exception_handler_error_code_21, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(22, exception_handler_22, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(23, exception_handler_23, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(24, exception_handler_24, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(25, exception_handler_25, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(26, exception_handler_26, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(27, exception_handler_27, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(28, exception_handler_28, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(29, exception_handler_error_code_29, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(30, exception_handler_error_code_30, 0x10, 0, GATE_TYPE_TRAP);
-	set_idt_desc(31, exception_handler_31, 0x10, 0, GATE_TYPE_TRAP);
+	set_exception_idt(0, exception_handler_0);
+	set_exception_idt(1, exception_handler_1);
+	set_exception_idt(2, exception_handler_2);
+	set_exception_idt(3, exception_handler_3);
+	set_exception_idt(4, exception_handler_4);
+	set_exception_idt(5, exception_handler_5);
+	set_exception_idt(6, exception_handler_6);
+	set_exception_idt(7, exception_handler_7);
+	set_exception_idt(8, exception_handler_error_code_8);
+	set_exception_idt(9, exception_handler_9);
+	set_exception_idt(10, exception_handler_error_code_10);
+	set_exception_idt(11, exception_handler_error_code_11);
+	set_exception_idt(12, exception_handler_error_code_12);
+	set_exception_idt(13, exception_handler_error_code_13);
+	set_exception_idt(14, pagefault_handler);
+	set_exception_idt(15, exception_handler_15);
+	set_exception_idt(16, exception_handler_16);
+	set_exception_idt(17, exception_handler_error_code_17);
+	set_exception_idt(18, exception_handler_18);
+	set_exception_idt(19, exception_handler_19);
+	set_exception_idt(20, exception_handler_20);
+	set_exception_idt(21, exception_handler_error_code_21);
+	set_exception_idt(22, exception_handler_22);
+	set_exception_idt(23, exception_handler_23);
+	set_exception_idt(24, exception_handler_24);
+	set_exception_idt(25, exception_handler_25);
+	set_exception_idt(26, exception_handler_26);
+	set_exception_idt(27, exception_handler_27);
+	set_exception_idt(28, exception_handler_28);
+	set_exception_idt(29, exception_handler_error_code_29);
+	set_exception_idt(30, exception_handler_error_code_30);
+	set_exception_idt(31, exception_handler_31);
 }
 
 #pragma GCC diagnostic pop

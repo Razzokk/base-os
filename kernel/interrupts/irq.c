@@ -1,9 +1,30 @@
 #include "interrupts/irq.h"
 
+#include <stdbool.h>
+#include <sys/io.h>
 #include "interrupts/pic.h"
 #include "interrupts/interrupts.h"
 #include "tbuf.h"
 #include "terminal.h"
+#include "debug.h"
+#include "misc.h"
+
+static char keycode_to_char[] =
+{
+	0, 0, '1', '2', '3', '4', '5' , '6',
+	'7', '8', '9', '0', '-', '=', '\b', '\t',
+	'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
+	'o', 'p', '[', ']', '\n', 0, 'a', 's',
+	'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+	'\'', '`', 0, '\\', 'z', 'x', 'c', 'v',
+	'b', 'n', 'm', ',', '.', '/',0, '*',
+	0, ' ', 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, '7',
+	'8', '9', '-', '4', '5', '6', '+', '1',
+	'2', '3', '0', '.', 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0,
+	0, '\n', 0, '/'
+};
 
 #define default_handler(irq_number) \
 __attribute__((interrupt)) void irq_ ## irq_number ## _handler(const interrupt_frame* frame) \
@@ -21,7 +42,6 @@ void default_irq_handler(const interrupt_frame* frame, uint8_t irq_number)
 	pic_send_eoi(irq_number);
 }
 
-default_handler(1)
 default_handler(2)
 default_handler(3)
 default_handler(4)
@@ -46,28 +66,50 @@ __attribute__((interrupt)) void timer_interrupt_handler(const interrupt_frame* f
 	pic_send_eoi(0);
 }
 
+__attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame* frame)
+{
+	uint8_t scancode = inb(0x60);
+	extern terminal_t terminal;
+	bool released = scancode & 0x80;
+	uint8_t keycode = scancode & 0x7F;
+
+	if (!released && keycode < sizeof(keycode_to_char))
+	{
+		char character = keycode_to_char[keycode];
+		if (character != 0)
+			term_putchar(&terminal, character);
+	}
+
+	pic_send_eoi(1);
+}
+
 #pragma GCC diagnostic pop
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 
+static inline void set_irq_idt(size_t irq_number, void* handler)
+{
+	set_idt_desc(NUM_EXCEPTIONS + irq_number, handler, 0x10, 0, GATE_TYPE_INTERRUPT);
+}
+
 void setup_irqs()
 {
-	set_idt_desc(NUM_EXCEPTIONS + 0, timer_interrupt_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 1, irq_1_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 2, irq_2_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 3, irq_3_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 4, irq_4_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 5, irq_5_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 6, irq_6_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 7, irq_7_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 8, irq_8_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 9, irq_9_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 10, irq_10_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 11, irq_11_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 12, irq_12_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 13, irq_13_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 14, irq_14_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-	set_idt_desc(NUM_EXCEPTIONS + 15, irq_15_handler, 0x10, 0, GATE_TYPE_INTERRUPT);
+	set_irq_idt(0, timer_interrupt_handler);
+	set_irq_idt(1, keyboard_interrupt_handler);
+	set_irq_idt(2, irq_2_handler);
+	set_irq_idt(3, irq_3_handler);
+	set_irq_idt(4, irq_4_handler);
+	set_irq_idt(5, irq_5_handler);
+	set_irq_idt(6, irq_6_handler);
+	set_irq_idt(7, irq_7_handler);
+	set_irq_idt(8, irq_8_handler);
+	set_irq_idt(9, irq_9_handler);
+	set_irq_idt(10, irq_10_handler);
+	set_irq_idt(11, irq_11_handler);
+	set_irq_idt(12, irq_12_handler);
+	set_irq_idt(13, irq_13_handler);
+	set_irq_idt(14, irq_14_handler);
+	set_irq_idt(15, irq_15_handler);
 
 	pic_init(PIC_MASTER_OFFSET, PIC_SLAVE_OFFSET);
 	pic_disable_all();

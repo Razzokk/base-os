@@ -80,13 +80,16 @@ noreturn void kmain()
 
 	debug_literal("[\x1b[33mDEBUG\x1b[m]: print some useful information for debugging here\n");
 
-	pic_enable_irq(0); // enable timer interrupts
-
 	term_putliteral(&terminal, "\n\nHere a random number: ");
 	size_t len = ulltoa(rand(), buffer, 10);
 	term_set_fg(&terminal, RED);
 	term_putstr(&terminal, buffer, len);
 	term_set_fg(&terminal, LIGHT_GREEN);
+
+	term_putliteral(&terminal, "\n\nWrite some stuff:\n");
+
+	pic_enable_irq(0); // enable timer interrupts
+	pic_enable_irq(1); // enable keyboard interrupts
 
 	// let's cause a page-fault:
 //	*(int*)(0x123456789) = 42;
