@@ -120,7 +120,7 @@ void term_set_fg(terminal_t* terminal, vga_color color)
 	terminal->foreground = color;
 }
 
-vga_color term_get_fg(terminal_t* terminal)
+vga_color term_get_fg(const terminal_t* terminal)
 {
 	return terminal->foreground;
 }
@@ -130,7 +130,7 @@ void term_set_bg(terminal_t* terminal, vga_color color)
 	terminal->background = color;
 }
 
-vga_color term_get_bg(terminal_t* terminal)
+vga_color term_get_bg(const terminal_t* terminal)
 {
 	return terminal->background;
 }

@@ -55,7 +55,7 @@ void term_flush(terminal_t* terminal);
 
 void term_write(terminal_t* terminal, size_t row, size_t col, char chr);
 
-tbuf_char term_read(terminal_t* terminal, size_t row, size_t col);
+tbuf_char term_read(const terminal_t* terminal, size_t row, size_t col);
 
 void term_scroll_up(terminal_t* terminal, size_t rows);
 
@@ -75,11 +75,11 @@ void term_restore_cursor_pos(terminal_t* terminal);
 
 void term_set_fg(terminal_t* terminal, vga_color color);
 
-vga_color term_get_fg(terminal_t* terminal);
+vga_color term_get_fg(const terminal_t* terminal);
 
 void term_set_bg(terminal_t* terminal, vga_color color);
 
-vga_color term_get_bg(terminal_t* terminal);
+vga_color term_get_bg(const terminal_t* terminal);
 
 #ifdef __cplusplus
 }

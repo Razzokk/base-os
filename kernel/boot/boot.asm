@@ -110,9 +110,22 @@ stack_top:
 
 section .rodata
 gdt64:
-    dq 0    ; zero entry
+    dq 0    	; zero entry
+    dq 0    	; zero entry
 .code_segment: equ $ - gdt64
-    dq (1 << 43) | (1 << 44) | (1 << 47) | (1 << 53)    ; code segment
+	dw 0xFFFF	; limit_low
+	dw 0		; base_low
+	db 0		; base_mid_low
+	db 0x9A		; access_byte
+	db 0xAF		; limit_high (lower 4 bits), flags (higher 4 bits)
+	db 0		; base_mid_high
+.data_segment: equ $ - .code_segment
+	dw 0xFFFF	; limit_low
+	dw 0		; base_low
+	db 0		; base_mid_low
+	db 0x92		; access_byte
+	db 0xCF		; limit_high (lower 4 bits), flags (higher 4 bits)
+	db 0		; base_mid_high
 .pointer:
     dw $ - gdt64 - 1
     dq gdt64

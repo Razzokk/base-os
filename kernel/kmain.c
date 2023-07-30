@@ -1,6 +1,7 @@
 #include <stdnoreturn.h>
 #include <stdbool.h>
 #include "kdefs.h"
+#include "interrupts.h"
 #include "terminal.h"
 #include "misc.h"
 #include "debug.h"
@@ -61,6 +62,8 @@ void print_colors()
 
 noreturn void kmain()
 {
+	setup_interrupts();
+	enable_interrupts();
 	seed_rand(rdtsc());
 
 	term_init(&terminal);
@@ -81,6 +84,9 @@ noreturn void kmain()
 	term_set_fg(&terminal, RED);
 	term_putstr(&terminal, buffer, len);
 	term_set_fg(&terminal, LIGHT_GREEN);
+
+	// let's cause a page-fault:
+	*(int*)(0x123456789) = 42;
 
 	// We don't return from kmain
 	while (true);

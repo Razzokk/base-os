@@ -3,7 +3,7 @@ OS_VERSION := 0.1.0
 TARGET := x86_64
 
 # Compiler flags
-CFLAGS := -std=gnu17 -Wall -Wextra -Wpedantic -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2
+CFLAGS := -std=gnu17 -Wall -Wextra -Wpedantic -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -mgeneral-regs-only
 CFLAGS += -D OS_VERSION=$(OS_VERSION)
 CFLAGS += -ggdb -O0
 LINK_FLAGS	:= -nostdlib -lgcc -z max-page-size=4096
