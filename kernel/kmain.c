@@ -1,8 +1,11 @@
+#include <stdnoreturn.h>
+#include <stdbool.h>
 #include "kdefs.h"
 #include "terminal.h"
 #include "misc.h"
 #include "debug.h"
 #include "colors.h"
+#include "rand.h"
 
 const char LOGO[] =
 "  ______   ______   ______    \n"
@@ -12,6 +15,7 @@ const char LOGO[] =
 "   \\/_____/ \\/_____/ \\/_____/ v" XSTRINGIFY(OS_VERSION) "\n\n";
 
 terminal_t terminal;
+char buffer[ULLTOA_BUF_SIZE];
 
 void init_color_palette()
 {
@@ -36,6 +40,7 @@ void init_color_palette()
 void print_colors()
 {
 	term_putliteral(&terminal, "Available colors:\n\n");
+	vga_color current_bg = term_get_bg(&terminal);
 
 	for (uint8_t color = 0; color < 8; ++color)
 	{
@@ -50,18 +55,33 @@ void print_colors()
 		term_set_bg(&terminal, color);
 		term_putliteral(&terminal, "  ");
 	}
+
+	term_set_bg(&terminal, current_bg);
 }
 
-void kmain()
+noreturn void kmain()
 {
+	seed_rand(rdtsc());
+
 	term_init(&terminal);
 	term_clear(&terminal);
 
 	init_color_palette();
+	term_set_fg(&terminal, BLACK);
+	term_set_fg(&terminal, LIGHT_GREEN);
 	term_putstr(&terminal, LOGO, sizeof(LOGO));
 
 	term_putchar(&terminal, '\n');
 	print_colors();
 
 	debug_literal("[\x1b[33mDEBUG\x1b[m]: print some useful information for debugging here\n");
+
+	term_putliteral(&terminal, "\n\nHere a random number: ");
+	size_t len = ulltoa(rand(), buffer, 10);
+	term_set_fg(&terminal, RED);
+	term_putstr(&terminal, buffer, len);
+	term_set_fg(&terminal, LIGHT_GREEN);
+
+	// We don't return from kmain
+	while (true);
 }

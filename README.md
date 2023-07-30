@@ -151,7 +151,7 @@ make all
 - [x] Printing functions
 - [x] Use docker image for building
 - [x] `rdtsc` instruction wrapper
-- [ ] Simple pseudo random number generator ([linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator))
+- [x] Simple pseudo random number generator ([linear congruential generator](https://en.wikipedia.org/wiki/Linear_congruential_generator))
 - [ ] Simple interrupts with [PIC](https://wiki.osdev.org/8259_PIC) (timer and keyboard interrupts, requires I/O)
 - [ ] Simple lock (spin-lock, with `xchg` instruction)
 - [ ] Simple kernel memory management (`kmalloc`)

@@ -75,7 +75,11 @@ void term_restore_cursor_pos(terminal_t* terminal);
 
 void term_set_fg(terminal_t* terminal, vga_color color);
 
+vga_color term_get_fg(terminal_t* terminal);
+
 void term_set_bg(terminal_t* terminal, vga_color color);
+
+vga_color term_get_bg(terminal_t* terminal);
 
 #ifdef __cplusplus
 }
