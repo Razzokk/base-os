@@ -143,6 +143,14 @@ For example, to now build the OS you can just type:
 make all
 ```
 
+## Screenshot
+
+A screenshot of what you get to see when initially starting up the OS at the time of writing this:
+
+![screenshot](./resources/screenshot.png)
+
+Credit goes to https://patorjk.com/ for providing an awesome ASCII text generator that was used to make the logo.
+
 ## Planned
 
 - [x] I/O with `outb` and `inb` instructions
@@ -155,4 +163,6 @@ make all
 - [x] Exceptions
 - [x] Simple interrupts with [PIC](https://wiki.osdev.org/8259_PIC) (timer and keyboard interrupts, requires I/O)
 - [ ] Simple lock (spin-lock, with `xchg` instruction)
-- [ ] Simple kernel memory management (`kmalloc`)
+- [ ] Simple kernel memory management (page-manager and `kmalloc`)
+- [ ] Simple file system
+- [ ] Simple multitasking (scheduler)
