@@ -67,6 +67,8 @@ void term_putchar(terminal_t* terminal, char chr);
 
 void term_putstr(terminal_t* terminal, const char* str, size_t n);
 
+void term_printf(terminal_t* terminal, const char* format, ...);
+
 void term_set_cursor_pos(terminal_t* terminal, size_t row, size_t col);
 
 void term_save_cursor_pos(terminal_t* terminal);

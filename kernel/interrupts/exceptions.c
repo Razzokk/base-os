@@ -1,7 +1,6 @@
 #include "interrupts/exceptions.h"
 
 #include "debug.h"
-#include "misc.h"
 
 #define default_handler(exception_number) \
 __attribute__((interrupt)) void exception_handler_ ## exception_number(const interrupt_frame* frame) \
@@ -52,28 +51,11 @@ const char* const EXCEPTION_NAMES[NUM_EXCEPTIONS] =
 
 void print_frame(const interrupt_frame* frame)
 {
-	char buffer[ULLTOA_BUF_SIZE];
-
-	debug_literal("- rip:\t\t");
-	ulltoa(frame->rip, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-
-	debug_literal("\n- cs:\t\t");
-	ulltoa(frame->cs, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-
-	debug_literal("\n- rflags:\t");
-	ulltoa(frame->rflags, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-
-	debug_literal("\n- rsp:\t\t");
-	ulltoa(frame->rsp, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-
-	debug_literal("\n- ss:\t\t");
-	ulltoa(frame->ss, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-	debug_char('\n');
+	debugf("- rip:\t\t%x\n", frame->rip);
+	debugf("- cs:\t\t%x\n", frame->cs);
+	debugf("- rflags:\t%x\n", frame->rflags);
+	debugf("- rsp:\t\t%x\n", frame->rsp);
+	debugf("- ss:\t\t%x\n", frame->ss);
 }
 
 void default_exception_handler(const interrupt_frame* frame, size_t exception_number)
@@ -92,11 +74,7 @@ void default_exception_handler_error_code(const interrupt_frame* frame, uint64_t
 	debug(EXCEPTION_NAMES[exception_number], 48);
 	debug_literal(" occurred!\n");
 
-	char buffer[ULLTOA_BUF_SIZE];
-	debug_literal("- err_code:\t");
-	ulltoa(error_code, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-	debug_char('\n');
+	debugf("- err_code:\t%x\n", error_code);
 
 	print_frame(frame);
 	disable_interrupts();
@@ -139,18 +117,10 @@ __attribute__((interrupt)) void pagefault_handler(const interrupt_frame* frame, 
 {
 	debug_literal("[\x1b[91mDEBUG\x1b[m]: Page Fault occurred!\n");
 
-	char buffer[ULLTOA_BUF_SIZE];
-	debug_literal("- address:\t");
 	uint64_t address;
 	asm volatile("mov %%cr2, %%rax" : "=a"(address));
-	ulltoa(address, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-	debug_char('\n');
-
-	debug_literal("- err_code:\t");
-	ulltoa(error_code, buffer, 16);
-	debug(buffer, ULLTOA_BUF_SIZE);
-	debug_char('\n');
+	debugf("- address:\t%x\n", address);
+	debugf("- err_code:\t%x\n", error_code);
 
 	print_frame(frame);
 	disable_interrupts();

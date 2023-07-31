@@ -1,7 +1,11 @@
 #include "terminal.h"
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 #include "misc.h"
+
+#define BUFFER_SIZE 128
 
 void term_init(terminal_t* terminal)
 {
@@ -104,6 +108,16 @@ void term_putstr(terminal_t* terminal, const char* str, size_t n)
 		if (chr == 0) return;
 		term_putchar(terminal, chr);
 	}
+}
+
+void term_printf(terminal_t* terminal, const char* format, ...)
+{
+	char buffer[BUFFER_SIZE];
+	va_list args;
+	va_start(args, format);
+	size_t length = vsnprintf(buffer, BUFFER_SIZE, format, args);
+	va_end(args);
+	term_putstr(terminal, buffer, length);
 }
 
 void term_set_cursor_pos(terminal_t* terminal, size_t row, size_t col)

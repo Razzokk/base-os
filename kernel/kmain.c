@@ -17,7 +17,6 @@ const char LOGO[] =
 "   \\/_____/ \\/_____/ \\/_____/ v" XSTRINGIFY(OS_VERSION) "\n\n";
 
 terminal_t terminal;
-char buffer[ULLTOA_BUF_SIZE];
 
 void init_color_palette()
 {
@@ -78,12 +77,11 @@ noreturn void kmain()
 	term_putchar(&terminal, '\n');
 	print_colors();
 
-	debug_literal("[\x1b[33mDEBUG\x1b[m]: print some useful information for debugging here\n");
+	debugf("[%s]: print some useful information for %s here\n", "\x1b[33mDEBUG\x1b[m", "debugging");
 
 	term_putliteral(&terminal, "\n\nHere a random number: ");
-	size_t len = ulltoa(rand(), buffer, 10);
 	term_set_fg(&terminal, RED);
-	term_putstr(&terminal, buffer, len);
+	term_printf(&terminal, "%d", rand());
 	term_set_fg(&terminal, LIGHT_GREEN);
 
 	term_putliteral(&terminal, "\n\nWrite some stuff:\n");
