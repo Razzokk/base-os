@@ -1,8 +1,5 @@
 #include "colors.h"
 
-#include "misc.h"
-#include "debug.h"
-
 void set_color_palette_rbg(uint8_t color_index, uint8_t red, uint8_t green, uint8_t blue)
 {
 	// Dark Yellow, Brown - for some fucked up reason this is not properly handled as color 6 but needs also to be set as 20

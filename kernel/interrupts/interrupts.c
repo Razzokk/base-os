@@ -8,7 +8,7 @@
 
 gate_descriptor idt[NUM_INTERRUPTS] __attribute__((aligned(IDT_ALIGNMENT)));
 
-void set_idt_desc(size_t index, void* isr, uint8_t segment_selector, uint8_t ist, uint8_t type_attributes)
+void set_idt_desc(size_t index, fptr_t isr, uint8_t segment_selector, uint8_t ist, uint8_t type_attributes)
 {
 	gate_descriptor* entry = idt + index;
 
@@ -21,10 +21,7 @@ void set_idt_desc(size_t index, void* isr, uint8_t segment_selector, uint8_t ist
 	entry->reserved = 0;
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
-void setup_interrupts()
+void setup_interrupts(void)
 {
 	idt_ptr idtr;
 	idtr.limit = sizeof(idt) - 1;
@@ -37,5 +34,3 @@ void setup_interrupts()
 
 	asm volatile("lidt %[idtr]" :: [idtr]"m"(idtr));
 }
-
-#pragma GCC diagnostic pop

@@ -8,7 +8,7 @@ extern "C" {
 
 // Really rough approx.
 // io_delay has ~ 1-4 microsecond delay
-static inline void io_delay()
+static inline void io_delay(void)
 {
 	asm volatile("outb %al, $0x80");
 }

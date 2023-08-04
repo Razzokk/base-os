@@ -4,10 +4,10 @@
 extern "C" {
 #endif
 
-long lrand48();
+long lrand48(void);
 long nrand48(unsigned short xsubi[3]);
 
-long mrand48();
+long mrand48(void);
 long jrand48(unsigned short xsubi[3]);
 
 void srand48(long seedval);

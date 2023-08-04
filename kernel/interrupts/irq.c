@@ -84,32 +84,30 @@ __attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame
 }
 
 #pragma GCC diagnostic pop
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
 
-static inline void set_irq_idt(size_t irq_number, void* handler)
+static inline void set_irq_idt(size_t irq_number, fptr_t handler)
 {
 	set_idt_desc(NUM_EXCEPTIONS + irq_number, handler, 0x10, 0, GATE_TYPE_INTERRUPT);
 }
 
-void setup_irqs()
+void setup_irqs(void)
 {
-	set_irq_idt(0, timer_interrupt_handler);
-	set_irq_idt(1, keyboard_interrupt_handler);
-	set_irq_idt(2, irq_2_handler);
-	set_irq_idt(3, irq_3_handler);
-	set_irq_idt(4, irq_4_handler);
-	set_irq_idt(5, irq_5_handler);
-	set_irq_idt(6, irq_6_handler);
-	set_irq_idt(7, irq_7_handler);
-	set_irq_idt(8, irq_8_handler);
-	set_irq_idt(9, irq_9_handler);
-	set_irq_idt(10, irq_10_handler);
-	set_irq_idt(11, irq_11_handler);
-	set_irq_idt(12, irq_12_handler);
-	set_irq_idt(13, irq_13_handler);
-	set_irq_idt(14, irq_14_handler);
-	set_irq_idt(15, irq_15_handler);
+	set_irq_idt(0, (fptr_t)timer_interrupt_handler);
+	set_irq_idt(1, (fptr_t)keyboard_interrupt_handler);
+	set_irq_idt(2, (fptr_t)irq_2_handler);
+	set_irq_idt(3, (fptr_t)irq_3_handler);
+	set_irq_idt(4, (fptr_t)irq_4_handler);
+	set_irq_idt(5, (fptr_t)irq_5_handler);
+	set_irq_idt(6, (fptr_t)irq_6_handler);
+	set_irq_idt(7, (fptr_t)irq_7_handler);
+	set_irq_idt(8, (fptr_t)irq_8_handler);
+	set_irq_idt(9, (fptr_t)irq_9_handler);
+	set_irq_idt(10, (fptr_t)irq_10_handler);
+	set_irq_idt(11, (fptr_t)irq_11_handler);
+	set_irq_idt(12, (fptr_t)irq_12_handler);
+	set_irq_idt(13, (fptr_t)irq_13_handler);
+	set_irq_idt(14, (fptr_t)irq_14_handler);
+	set_irq_idt(15, (fptr_t)irq_15_handler);
 
 	pic_init(PIC_MASTER_OFFSET, PIC_SLAVE_OFFSET);
 	pic_disable_all();
@@ -119,5 +117,3 @@ void setup_irqs()
 
 	pic_enable_irq(2);	// IRQ to cascade to slave pic
 }
-
-#pragma GCC diagnostic pop

@@ -8,7 +8,7 @@ extern "C" {
 
 void seed_rand(uint64_t seed);
 
-uint64_t rand();
+uint64_t rand(void);
 
 #ifdef __cplusplus
 }

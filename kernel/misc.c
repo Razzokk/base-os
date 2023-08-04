@@ -4,7 +4,7 @@
 #include <string.h>
 #include <sys/io.h>
 
-uint64_t rdtsc()
+uint64_t rdtsc(void)
 {
 	uint64_t high;
 	uint32_t low;
@@ -12,7 +12,7 @@ uint64_t rdtsc()
 	return (high << 32) | low;
 }
 
-void hw_cursor_disable()
+void hw_cursor_disable(void)
 {
 	outb(0x3D4, 0x0A);
 	// Fifth bit enables/disables cursor

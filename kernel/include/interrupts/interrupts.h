@@ -2,6 +2,11 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "kdefs.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define NUM_EXCEPTIONS	32
 #define NUM_IRQS		16
@@ -43,16 +48,20 @@ typedef struct idt_ptr
 
 extern gate_descriptor idt[NUM_INTERRUPTS];
 
-static inline void disable_interrupts()
+static inline void disable_interrupts(void)
 {
 	asm volatile("cli");
 }
 
-static inline void enable_interrupts()
+static inline void enable_interrupts(void)
 {
 	asm volatile("sti");
 }
 
-void set_idt_desc(size_t index, void* isr, uint8_t segment_selector, uint8_t ist, uint8_t type_attributes);
+void set_idt_desc(size_t index, fptr_t isr, uint8_t segment_selector, uint8_t ist, uint8_t type_attributes);
 
-void setup_interrupts();
+void setup_interrupts(void);
+
+#ifdef __cplusplus
+}
+#endif

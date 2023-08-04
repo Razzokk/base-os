@@ -17,7 +17,7 @@ unsigned short _rand48_c = _DEFAULT_PARAM_C;
 static unsigned short _buffer[3];
 
 // stdlib
-long lrand48()
+long lrand48(void)
 {
 	return nrand48(_rand48_xsubi);
 }
@@ -27,7 +27,7 @@ long nrand48(unsigned short xsubi[3])
 	return jrand48(xsubi) & INT32_MAX;
 }
 
-long mrand48()
+long mrand48(void)
 {
 	return jrand48(_rand48_xsubi);
 }

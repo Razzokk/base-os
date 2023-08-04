@@ -24,6 +24,9 @@ extern "C" {
 #define align_down(x, align) __builtin_align_down(x, align)
 #define is_aligned(x, align) __builtin_is_aligned(x, align)
 
+/** Generic function pointer type */
+typedef void(*fptr_t)(void);
+
 #ifdef __cplusplus
 }
 #endif

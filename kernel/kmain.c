@@ -1,6 +1,5 @@
 #include <stdnoreturn.h>
 #include <stdbool.h>
-#include "kdefs.h"
 #include "interrupts/interrupts.h"
 #include "interrupts/pic.h"
 #include "terminal.h"
@@ -18,7 +17,7 @@ const char LOGO[] =
 
 terminal_t terminal;
 
-void init_color_palette()
+void init_color_palette(void)
 {
 	set_color_palette(BLACK, 0x2D2727);
 	set_color_palette(BLUE, 0x11009E);
@@ -38,7 +37,7 @@ void init_color_palette()
 	set_color_palette(BRIGHT_WHITE, 0xFDE2F3);
 }
 
-void print_colors()
+void print_colors(void)
 {
 	term_putliteral(&terminal, "Available colors:\n\n");
 	vga_color current_bg = term_get_bg(&terminal);
@@ -60,7 +59,7 @@ void print_colors()
 	term_set_bg(&terminal, current_bg);
 }
 
-noreturn void kmain()
+noreturn void kmain(void)
 {
 	setup_interrupts();
 	enable_interrupts();

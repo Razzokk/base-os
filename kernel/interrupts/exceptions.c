@@ -127,48 +127,43 @@ __attribute__((interrupt)) void pagefault_handler(const interrupt_frame* frame, 
 	asm volatile("hlt");
 }
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wpedantic"
-
-static inline void set_exception_idt(size_t exception_number, void* handler)
+static inline void set_exception_idt(size_t exception_number, fptr_t handler)
 {
 	set_idt_desc(exception_number, handler, 0x10, 0, GATE_TYPE_TRAP);
 }
 
-void setup_exceptions()
+void setup_exceptions(void)
 {
-	set_exception_idt(0, exception_handler_0);
-	set_exception_idt(1, exception_handler_1);
-	set_exception_idt(2, exception_handler_2);
-	set_exception_idt(3, exception_handler_3);
-	set_exception_idt(4, exception_handler_4);
-	set_exception_idt(5, exception_handler_5);
-	set_exception_idt(6, exception_handler_6);
-	set_exception_idt(7, exception_handler_7);
-	set_exception_idt(8, exception_handler_error_code_8);
-	set_exception_idt(9, exception_handler_9);
-	set_exception_idt(10, exception_handler_error_code_10);
-	set_exception_idt(11, exception_handler_error_code_11);
-	set_exception_idt(12, exception_handler_error_code_12);
-	set_exception_idt(13, exception_handler_error_code_13);
-	set_exception_idt(14, pagefault_handler);
-	set_exception_idt(15, exception_handler_15);
-	set_exception_idt(16, exception_handler_16);
-	set_exception_idt(17, exception_handler_error_code_17);
-	set_exception_idt(18, exception_handler_18);
-	set_exception_idt(19, exception_handler_19);
-	set_exception_idt(20, exception_handler_20);
-	set_exception_idt(21, exception_handler_error_code_21);
-	set_exception_idt(22, exception_handler_22);
-	set_exception_idt(23, exception_handler_23);
-	set_exception_idt(24, exception_handler_24);
-	set_exception_idt(25, exception_handler_25);
-	set_exception_idt(26, exception_handler_26);
-	set_exception_idt(27, exception_handler_27);
-	set_exception_idt(28, exception_handler_28);
-	set_exception_idt(29, exception_handler_error_code_29);
-	set_exception_idt(30, exception_handler_error_code_30);
-	set_exception_idt(31, exception_handler_31);
+	set_exception_idt(0, (fptr_t)exception_handler_0);
+	set_exception_idt(1, (fptr_t)exception_handler_1);
+	set_exception_idt(2, (fptr_t)exception_handler_2);
+	set_exception_idt(3, (fptr_t)exception_handler_3);
+	set_exception_idt(4, (fptr_t)exception_handler_4);
+	set_exception_idt(5, (fptr_t)exception_handler_5);
+	set_exception_idt(6, (fptr_t)exception_handler_6);
+	set_exception_idt(7, (fptr_t)exception_handler_7);
+	set_exception_idt(8, (fptr_t)exception_handler_error_code_8);
+	set_exception_idt(9, (fptr_t)exception_handler_9);
+	set_exception_idt(10, (fptr_t)exception_handler_error_code_10);
+	set_exception_idt(11, (fptr_t)exception_handler_error_code_11);
+	set_exception_idt(12, (fptr_t)exception_handler_error_code_12);
+	set_exception_idt(13, (fptr_t)exception_handler_error_code_13);
+	set_exception_idt(14, (fptr_t)pagefault_handler);
+	set_exception_idt(15, (fptr_t)exception_handler_15);
+	set_exception_idt(16, (fptr_t)exception_handler_16);
+	set_exception_idt(17, (fptr_t)exception_handler_error_code_17);
+	set_exception_idt(18, (fptr_t)exception_handler_18);
+	set_exception_idt(19, (fptr_t)exception_handler_19);
+	set_exception_idt(20, (fptr_t)exception_handler_20);
+	set_exception_idt(21, (fptr_t)exception_handler_error_code_21);
+	set_exception_idt(22, (fptr_t)exception_handler_22);
+	set_exception_idt(23, (fptr_t)exception_handler_23);
+	set_exception_idt(24, (fptr_t)exception_handler_24);
+	set_exception_idt(25, (fptr_t)exception_handler_25);
+	set_exception_idt(26, (fptr_t)exception_handler_26);
+	set_exception_idt(27, (fptr_t)exception_handler_27);
+	set_exception_idt(28, (fptr_t)exception_handler_28);
+	set_exception_idt(29, (fptr_t)exception_handler_error_code_29);
+	set_exception_idt(30, (fptr_t)exception_handler_error_code_30);
+	set_exception_idt(31, (fptr_t)exception_handler_31);
 }
-
-#pragma GCC diagnostic pop
