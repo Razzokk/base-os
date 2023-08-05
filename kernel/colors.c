@@ -1,6 +1,8 @@
 #include "colors.h"
 
-void set_color_palette_rbg(uint8_t color_index, uint8_t red, uint8_t green, uint8_t blue)
+#include "terminal.h"
+
+void set_color_palette_index_rbg(uint8_t color_index, uint8_t red, uint8_t green, uint8_t blue)
 {
 	// Dark Yellow, Brown - for some fucked up reason this is not properly handled as color 6 but needs also to be set as 20
 	if (color_index == 6)
@@ -22,9 +24,29 @@ void set_color_palette_rbg(uint8_t color_index, uint8_t red, uint8_t green, uint
 	outb(VGA_DAC_DATA, blue / 4); // B (0-63)
 }
 
-void set_color_palette(uint8_t color_index, uint32_t rgb)
+void set_color_palette_index(uint8_t color_index, uint32_t rgb)
 {
-	set_color_palette_rbg(color_index, RED(rgb), GREEN(rgb), BLUE(rgb));
+	set_color_palette_index_rbg(color_index, RED(rgb), GREEN(rgb), BLUE(rgb));
+}
+
+void set_color_palette(color_palette color_palette)
+{
+	set_color_palette_index(BLACK, color_palette.black);
+	set_color_palette_index(BLUE, color_palette.blue);
+	set_color_palette_index(GREEN, color_palette.green);
+	set_color_palette_index(CYAN, color_palette.cyan);
+	set_color_palette_index(RED, color_palette.red);
+	set_color_palette_index(MAGENTA, color_palette.magenta);
+	set_color_palette_index(BROWN, color_palette.brown);
+	set_color_palette_index(WHITE, color_palette.white);
+	set_color_palette_index(GRAY, color_palette.gray);
+	set_color_palette_index(LIGHT_BLUE, color_palette.light_blue);
+	set_color_palette_index(LIGHT_GREEN, color_palette.light_green);
+	set_color_palette_index(LIGHT_CYAN, color_palette.light_cyan);
+	set_color_palette_index(LIGHT_RED, color_palette.light_red);
+	set_color_palette_index(LIGHT_MAGENTA, color_palette.light_magenta);
+	set_color_palette_index(YELLOW, color_palette.yellow);
+	set_color_palette_index(BRIGHT_WHITE, color_palette.bright_white);
 }
 
 uint32_t hsv2rgb(uint32_t hue, uint16_t saturation, uint8_t value)

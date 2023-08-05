@@ -7,8 +7,8 @@
 extern "C" {
 #endif
 
-#define STRINGIFY(x) #x
-#define XSTRINGIFY(x) STRINGIFY(x)
+#define stringify(x) #x
+#define xstringify(x) stringify(x)
 
 uint64_t rdtsc(void);
 

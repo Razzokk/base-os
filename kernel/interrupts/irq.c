@@ -6,8 +6,8 @@
 #include "interrupts/interrupts.h"
 #include "tbuf.h"
 #include "terminal.h"
-#include "debug.h"
-#include "misc.h"
+#include "colors.h"
+#include "color_palettes.h"
 
 static char keycode_to_char[] =
 {
@@ -68,6 +68,7 @@ __attribute__((interrupt)) void timer_interrupt_handler(const interrupt_frame* f
 
 __attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame* frame)
 {
+	static size_t f10_counter = 0;
 	uint8_t scancode = inb(0x60);
 	extern terminal_t terminal;
 	bool released = scancode & 0x80;
@@ -77,7 +78,14 @@ __attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame
 	{
 		char character = keycode_to_char[keycode];
 		if (character != 0)
+		{
 			term_putchar(&terminal, character);
+		}
+		else if (keycode == 68) // F10
+		{
+			f10_counter = (f10_counter + 1) % sizeof(COLOR_PALETTES);
+			set_color_palette(*COLOR_PALETTES[f10_counter]);
+		}
 	}
 
 	pic_send_eoi(1);
