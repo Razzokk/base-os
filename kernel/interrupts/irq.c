@@ -83,7 +83,7 @@ __attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame
 		}
 		else if (keycode == 68) // F10
 		{
-			f10_counter = (f10_counter + 1) % sizeof(COLOR_PALETTES);
+			f10_counter = (f10_counter + 1) % NUM_COLOR_PALETTES;
 			set_color_palette(*COLOR_PALETTES[f10_counter]);
 		}
 	}
