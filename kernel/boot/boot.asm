@@ -27,10 +27,15 @@ extern _start64
 
 section .text
 _start:
-    mov esp, stack_top
+    mov esp, boot_stack_top
+    push eax	; save multiboot magic value
+    push ebx	; save multiboot info structure pointer
 
     call setup_page_tables
     call enable_paging
+
+    pop esi		; restore multiboot info structure pointer
+    pop edi		; restore multiboot magic value
 
     lgdt [gdt64.pointer]
     jmp gdt64.code_segment:_start64
@@ -95,6 +100,9 @@ enable_paging:
 
 PAGE_SIZE equ 4096
 
+global boot_stack_top
+global boot_stack_bot
+
 section .bss
 align 4096
 pml4_table:
@@ -103,9 +111,9 @@ pml3_table:
     resb PAGE_SIZE
 pml2_table:
     resb PAGE_SIZE
-stack_bot:
+boot_stack_bot:
     resb PAGE_SIZE * 4
-stack_top:
+boot_stack_top:
 
 
 section .rodata

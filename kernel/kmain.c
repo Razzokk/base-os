@@ -10,13 +10,16 @@
 #include "color_palettes.h"
 
 const char LOGO[] =
-		"  ______   ______   ______    \n"
+"  ______   ______   ______    \n"
 " /\\  == \\ /\\  __ \\ /\\  ___\\   \n"
 " \\ \\  __< \\ \\ \\/\\ \\\\ \\___  \\  \n"
 "  \\ \\_____\\\\ \\_____\\\\/\\_____\\ \n"
 "   \\/_____/ \\/_____/ \\/_____/ v" xstringify(OS_VERSION) "\n\n";
 
 terminal_t terminal;
+
+extern void* kernel_start_address;
+extern void* kernel_end_address;
 
 void print_colors(void)
 {

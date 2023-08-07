@@ -4,6 +4,8 @@ SECTIONS
 {
 	. = 1M;
 
+	PROVIDE(kernel_start_ = ABSOLUTE(.));
+
 	.text ALIGN(4K) :
 	{
 		*(.multiboot_header)
@@ -28,4 +30,6 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+
+	PROVIDE(kernel_end_ = ABSOLUTE(.));
 }
