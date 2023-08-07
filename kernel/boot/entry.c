@@ -2,6 +2,9 @@
 
 #include "kdefs.h"
 #include "debug.h"
+#include "memory.h"
+#include "paging.h"
+#include "string.h"
 
 extern void kmain(void);
 
@@ -11,6 +14,10 @@ extern void* kernel_end_;
 
 void* kernel_start_address = &kernel_start_;
 void* kernel_end_address = &kernel_end_;
+
+extern pml4_entry boot_pml4_table[PML4_ENTRIES];
+extern pml4_entry boot_pml3_table[PML4_ENTRIES];
+extern pml4_entry boot_pml2_table[PML4_ENTRIES];
 
 void handle_multiboot_mmap_tag(const multiboot_mmap_tag* tag)
 {
@@ -69,6 +76,8 @@ void parse_multiboot(const multiboot_info_struct* mboot_info)
 
 void entry(uint32_t mboot_magic, const multiboot_info_struct* mboot_info)
 {
+	mboot_info = (const multiboot_info_struct*) ((uintptr_t) mboot_info + KERNEL_VMA);
+
 	if (mboot_magic == MULTIBOOT2_LOADER_MAGIC)
 	{
 		debugf(DBG_GREEN "Multiboot loader magic matches => %x\n", MULTIBOOT2_LOADER_MAGIC);
@@ -83,6 +92,9 @@ void entry(uint32_t mboot_magic, const multiboot_info_struct* mboot_info)
 	debugf(DBG_GREEN "Boot stack address:            %p\n", &boot_stack_top);
 	debugf(DBG_GREEN "Kernel start address:          %p\n", kernel_start_address);
 	debugf(DBG_GREEN "Kernel end address:            %p\n", kernel_end_address);
+
+	debug_literal(DBG_GREEN "Unmap first pml4 entry and reload paging structure...\n");
+	memset(boot_pml4_table, 0, sizeof(pml4_entry));
 
 	parse_multiboot(mboot_info);
 	kmain();

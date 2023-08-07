@@ -22,12 +22,14 @@ mboot_hdr_end:
 
 ; Kernel setup & start sequence
 
+KERNEL_VMA equ 0xFFFFFF8000000000
+
 global _start
 extern _start64
 
 section .text
 _start:
-    mov esp, boot_stack_top
+    mov esp, (boot_stack_top - KERNEL_VMA)
     push eax	; save multiboot magic value
     push ebx	; save multiboot info structure pointer
 
@@ -37,8 +39,10 @@ _start:
     pop esi		; restore multiboot info structure pointer
     pop edi		; restore multiboot magic value
 
-    lgdt [gdt64.pointer]
-    jmp gdt64.code_segment:_start64
+	[warning -number-overflow]
+    lgdt [(gdt64.pointer - KERNEL_VMA)]
+    [warning *number-overflow]
+    jmp gdt64.code_segment:(_start64 - KERNEL_VMA)
 
     cli
 end:
@@ -46,15 +50,17 @@ end:
     jmp end
 
 
+; Map first and last pml4 entry -> first: 0x0, last: 0xFFFFFF8000000000
 setup_page_tables:
     ; identity mapping
-    mov eax, pml3_table
+    mov eax, (boot_pml3_table - KERNEL_VMA)
     or eax, 0b11    ; present, writable
-    mov [pml4_table], eax
+    mov [(boot_pml4_table - KERNEL_VMA)], eax
+    mov [(boot_pml4_table - KERNEL_VMA) + 4088], eax	; last pml4 entry
     
-    mov eax, pml2_table
+    mov eax, (boot_pml2_table - KERNEL_VMA)
     or eax, 0b11    ; present, writable
-    mov [pml3_table], eax
+    mov [(boot_pml3_table - KERNEL_VMA)], eax
 
     ; map pml2 entries to 2MiB pages
     mov ecx, 0  ; counter
@@ -63,7 +69,9 @@ setup_page_tables:
     mov eax, 0x200000   ; 2MiB
     mul ecx
     or eax, 0b10000011  ; present, writable, huge page
-    mov [pml2_table + ecx * 8], eax
+    [warning -number-overflow]
+    mov [(boot_pml2_table - KERNEL_VMA) + ecx * 8], eax
+	[warning *number-overflow]
 
     inc ecx         ; inc counter
     cmp ecx, 512    ; check if all pages are mapped
@@ -76,7 +84,7 @@ LONG_MODE_MAGIC equ 0xC0000080
 
 enable_paging:
     ; pass page table location to cpu
-    mov eax, pml4_table
+    mov eax, (boot_pml4_table - KERNEL_VMA)
     mov cr3, eax
     
     ; enable PAE (physical address extension)
@@ -100,16 +108,20 @@ enable_paging:
 
 PAGE_SIZE equ 4096
 
+global boot_pml4_table
+global boot_pml3_table
+global boot_pml2_table
+
 global boot_stack_top
 global boot_stack_bot
 
 section .bss
 align 4096
-pml4_table:
+boot_pml4_table:
     resb PAGE_SIZE
-pml3_table:
+boot_pml3_table:
     resb PAGE_SIZE
-pml2_table:
+boot_pml2_table:
     resb PAGE_SIZE
 boot_stack_bot:
     resb PAGE_SIZE * 4

@@ -2,12 +2,13 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "memory.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define TEXT_BUF_ADDR 0xB8000
+#define TEXT_BUF_ADDR P2V(0xB8000)
 #define TEXT_BUF_ROWS 25
 #define TEXT_BUF_COLS 80
 
