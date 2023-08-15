@@ -8,6 +8,7 @@
 #include "colors.h"
 #include "rand.h"
 #include "color_palettes.h"
+#include "timer.h"
 
 const char LOGO[] =
 "  ______   ______   ______    \n"
@@ -69,8 +70,8 @@ noreturn void kmain(void)
 
 	term_putliteral(&terminal, "\n\nWrite some stuff:\n");
 
-	pic_enable_irq(0); // enable timer interrupts
 	pic_enable_irq(1); // enable keyboard interrupts
+	init_timer(20);
 
 	// let's cause a page-fault:
 //	*(int*)(0x123456789) = 42;

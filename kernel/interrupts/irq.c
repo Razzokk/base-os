@@ -4,7 +4,6 @@
 #include <sys/io.h>
 #include "interrupts/pic.h"
 #include "interrupts/interrupts.h"
-#include "tbuf.h"
 #include "terminal.h"
 #include "colors.h"
 #include "color_palettes.h"
@@ -32,8 +31,6 @@ __attribute__((interrupt)) void irq_ ## irq_number ## _handler(const interrupt_f
 	default_irq_handler(frame, irq_number); \
 }
 
-#define TIMER_INTERRUPT_FREQUENCY_NS 54925439ULL
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
 
@@ -56,15 +53,6 @@ default_handler(12)
 default_handler(13)
 default_handler(14)
 default_handler(15)
-
-__attribute__((interrupt)) void timer_interrupt_handler(const interrupt_frame* frame)
-{
-	static size_t counter = 0;
-	const uint8_t display[] = {180, 217, 193, 192, 195, 218, 194, 191};
-	tbuf_write(0, TEXT_BUF_COLS - 1, (char)display[counter % sizeof(display)], BROWN, LIGHT_BLUE);
-	++counter;
-	pic_send_eoi(0);
-}
 
 __attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame* frame)
 {
@@ -93,14 +81,8 @@ __attribute__((interrupt)) void keyboard_interrupt_handler(const interrupt_frame
 
 #pragma GCC diagnostic pop
 
-static inline void set_irq_idt(size_t irq_number, fptr_t handler)
-{
-	set_idt_desc(NUM_EXCEPTIONS + irq_number, handler, 0x10, 0, GATE_TYPE_INTERRUPT);
-}
-
 void setup_irqs(void)
 {
-	set_irq_idt(0, (fptr_t)timer_interrupt_handler);
 	set_irq_idt(1, (fptr_t)keyboard_interrupt_handler);
 	set_irq_idt(2, (fptr_t)irq_2_handler);
 	set_irq_idt(3, (fptr_t)irq_3_handler);
