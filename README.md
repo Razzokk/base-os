@@ -164,7 +164,8 @@ Credit goes to https://patorjk.com/ for providing an awesome ASCII text generato
 - [x] Simple interrupts with [PIC](https://wiki.osdev.org/8259_PIC) (timer and keyboard interrupts, requires I/O)
 - [x] Parsing multiboot info structure
 - [x] Higher half kernel at 0xFFFFFF8000000000
+- [ ] Kernel panics
 - [ ] Simple lock (spin-lock, with `xchg` instruction)
-- [ ] Simple kernel memory management (page-manager and `kmalloc`)
+- [x] Simple kernel memory management (page-manager and `kmalloc`)
 - [ ] Simple file system
 - [ ] Simple multitasking (scheduler)

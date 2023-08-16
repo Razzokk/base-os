@@ -4,8 +4,15 @@
 extern "C" {
 #endif
 
-#define KERNEL_VMA 0xFFFFFF8000000000
-#define USER_BREAK 0x0000008000000000
+#define KERNEL_VMA 0xFFFFFF8000000000ULL
+#define USER_BREAK 0x0000008000000000ULL
+
+// Memory Sizes
+
+#define KiB 1024ULL
+#define MiB 1048576ULL
+#define GiB 1073741824ULL
+#define TiB 1099511627776ULL
 
 // Virtual <-> Physical conversion
 

@@ -108,12 +108,7 @@ enable_paging:
 
 PAGE_SIZE equ 4096
 
-global boot_pml4_table
-global boot_pml3_table
-global boot_pml2_table
-
 global boot_stack_top
-global boot_stack_bot
 
 section .bss
 align 4096
@@ -128,6 +123,8 @@ boot_stack_bot:
 boot_stack_top:
 
 
+global gdt64.pointer
+
 section .rodata
 gdt64:
     dq 0    	; zero entry
@@ -139,6 +136,7 @@ gdt64:
 	db 0x9A		; access_byte
 	db 0xAF		; limit_high (lower 4 bits), flags (higher 4 bits)
 	db 0		; base_mid_high
+    dq 0    	; zero
 .data_segment: equ $ - .code_segment
 	dw 0xFFFF	; limit_low
 	dw 0		; base_low
@@ -146,6 +144,7 @@ gdt64:
 	db 0x92		; access_byte
 	db 0xCF		; limit_high (lower 4 bits), flags (higher 4 bits)
 	db 0		; base_mid_high
+    dq 0    	; zero
 .pointer:
     dw $ - gdt64 - 1
     dq gdt64

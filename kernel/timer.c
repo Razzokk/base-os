@@ -15,13 +15,11 @@ __attribute__((interrupt)) static void timer_handler(const interrupt_frame* fram
 	tbuf_write(0, TEXT_BUF_COLS - 1, (char) display[counter % sizeof(display)], BROWN, LIGHT_BLUE);
 	++counter;
 	pic_send_eoi(0);
-	extern terminal_t terminal;
-	term_putchar(&terminal, '2');
 }
 
 #pragma GCC diagnostic pop
 
-void init_timer(uint32_t frequency_hz)
+void timer_init(uint32_t frequency_hz)
 {
 	set_irq_idt(0, (fptr_t) timer_handler);
 	uint32_t divisor = 1193180 / frequency_hz;

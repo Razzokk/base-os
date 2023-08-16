@@ -2,6 +2,7 @@ global _start64
 extern entry
 
 extern boot_stack_top
+extern gdt64.pointer
 
 section .text
 bits 64
@@ -10,7 +11,11 @@ _start64:
 	; they contain the multiboot magic value and multiboot info structure pointer
 	; they are passed as arguments to the entry function
 
-    mov ax, 0
+	; reload gdt
+	mov rax, gdt64.pointer
+	lgdt [rax]
+
+    mov ax, 0x20
     mov ss, ax
     mov ds, ax
     mov es, ax

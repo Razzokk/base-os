@@ -2,4 +2,4 @@
 
 #include <stdint.h>
 
-void init_timer(uint32_t frequency_hz);
+void timer_init(uint32_t frequency_hz);

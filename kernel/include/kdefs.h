@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,6 +27,8 @@ extern "C" {
 
 /** Generic function pointer type */
 typedef void(*fptr_t)(void);
+
+#define offset_pointer(ptr, offset) ((__typeof__(ptr)) (((uintptr_t) ptr) + offset))
 
 #ifdef __cplusplus
 }
