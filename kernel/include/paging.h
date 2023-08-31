@@ -134,29 +134,16 @@ typedef struct pml2_huge_entry
 	uint64_t execute_disable	: 1;
 } __attribute__((packed)) pml2_huge_entry;
 
-typedef pml4_entry pml4_table_t[NUM_PML4_ENTRIES];
-typedef pml3_entry pml3_table_t[NUM_PML3_ENTRIES];
-typedef pml2_entry pml2_table_t[NUM_PML2_ENTRIES];
-typedef pml1_entry pml1_table_t[NUM_PML1_ENTRIES];
-typedef pml3_huge_entry pml3_huge_table_t[NUM_PML3_ENTRIES];
-typedef pml2_huge_entry pml2_huge_table_t[NUM_PML2_ENTRIES];
-
 static_assert(sizeof(pml4_entry) == sizeof(uint64_t), "PML4 page entry has to be 64 bit wide");
 static_assert(sizeof(pml3_entry) == sizeof(uint64_t), "PML3 page entry has to be 64 bit wide");
 static_assert(sizeof(pml2_entry) == sizeof(uint64_t), "PML2 page entry has to be 64 bit wide");
 static_assert(sizeof(pml1_entry) == sizeof(uint64_t), "PML1 page entry has to be 64 bit wide");
 static_assert(sizeof(pml3_huge_entry) == sizeof(uint64_t), "PML3 (huge) page entry has to be 64 bit wide");
 static_assert(sizeof(pml2_huge_entry) == sizeof(uint64_t), "PML2 (huge) page entry has to be 64 bit wide");
-static_assert(sizeof(pml4_table_t) == PAGE_SIZE, "PML4 table has to be of size PAGE_SIZE (4096 bytes)");
-static_assert(sizeof(pml3_table_t) == PAGE_SIZE, "PML3 table has to be of size PAGE_SIZE (4096 bytes)");
-static_assert(sizeof(pml2_table_t) == PAGE_SIZE, "PML2 table has to be of size PAGE_SIZE (4096 bytes)");
-static_assert(sizeof(pml1_table_t) == PAGE_SIZE, "PML1 table has to be of size PAGE_SIZE (4096 bytes)");
-static_assert(sizeof(pml3_huge_table_t) == PAGE_SIZE, "PML3 (huge) table has to be of size PAGE_SIZE (4096 bytes)");
-static_assert(sizeof(pml2_huge_table_t) == PAGE_SIZE, "PML2 (huge) table has to be of size PAGE_SIZE (4096 bytes)");
 
-extern pml4_table_t* current_address_space;
+extern pml4_entry* current_address_space;
 
-void set_pml4(pml4_table_t* pml4_table);
+void set_pml4(pml4_entry* pml4_table);
 
 #ifdef __cplusplus
 }

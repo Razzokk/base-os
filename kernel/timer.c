@@ -12,7 +12,7 @@ __attribute__((interrupt)) static void timer_handler(const interrupt_frame* fram
 {
 	static size_t counter = 0;
 	const uint8_t display[] = {180, 217, 193, 192, 195, 218, 194, 191};
-	tbuf_write(0, TEXT_BUF_COLS - 1, (char) display[counter % sizeof(display)], BROWN, LIGHT_BLUE);
+	tbuf_write(0, text_buf_cols - 1, (char) display[counter % sizeof(display)], BROWN, LIGHT_BLUE);
 	++counter;
 	pic_send_eoi(0);
 }

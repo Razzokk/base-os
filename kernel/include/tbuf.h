@@ -8,10 +8,6 @@
 extern "C" {
 #endif
 
-#define TEXT_BUF_ADDR P2V(0xB8000)
-#define TEXT_BUF_ROWS 25
-#define TEXT_BUF_COLS 80
-
 typedef struct
 {
 	uint8_t chr;
@@ -19,7 +15,9 @@ typedef struct
 	uint8_t bg: 4;
 } __attribute__((packed)) tbuf_char;
 
-extern tbuf_char* const text_buffer;
+extern tbuf_char* text_buffer;
+extern size_t text_buf_rows;
+extern size_t text_buf_cols;
 
 tbuf_char* tbuf_at(size_t row, size_t col);
 

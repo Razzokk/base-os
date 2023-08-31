@@ -101,8 +101,8 @@ void* pmm_init(const multiboot_mmap_tag* mmap_info)
 			highest_usable_address = offset_pointer(entry->base_address, entry->length - 1);
 	}
 
-	// assert(lowest_usable_mmap_block_address != (void*) ((uintptr_t) -1))
-	// assert(highest_usable_mmap_block_address != NULL)
+	assert(lowest_usable_address != (void*) ((uintptr_t) -1));
+	assert(highest_usable_address != NULL);
 
 	// We need to align the lowest address to account for bytes which are not page aligned
 	lowest_usable_page = addr2page(align_up(lowest_usable_address, PAGE_SIZE), PAGE_SIZE);

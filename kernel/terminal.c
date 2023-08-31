@@ -3,20 +3,23 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include "kheap.h"
 #include "misc.h"
 
 #define BUFFER_SIZE 128
 
 void term_init(terminal_t* terminal)
 {
-	terminal->rows = TEXT_BUF_ROWS;
-	terminal->cols = TEXT_BUF_COLS;
+	terminal->buffer = kmalloc(text_buf_rows * text_buf_cols, 0);
+	terminal->rows = text_buf_rows;
+	terminal->cols = text_buf_cols;
 	terminal->cursor_row = 0;
 	terminal->cursor_col = 0;
 	terminal->saved_cursor_row = 0;
 	terminal->saved_cursor_col = 0;
 	terminal->foreground = LIGHT_GREEN;
 	terminal->background = BLACK;
+
 	memset(terminal->buffer, 0, terminal->rows * terminal->cols * sizeof(tbuf_char));
 	hw_cursor_enable(0, 15);
 	hw_cursor_set_pos(0, 0);

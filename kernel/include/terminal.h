@@ -34,7 +34,7 @@ typedef enum
 
 typedef struct
 {
-	tbuf_char buffer[TEXT_BUF_ROWS * TEXT_BUF_COLS];
+	tbuf_char* buffer;
 	uint8_t rows;
 	uint8_t cols;
 	uint8_t cursor_row;
