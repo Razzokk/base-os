@@ -41,13 +41,16 @@ mkdir gcc-build && cd gcc-build
 ../${gcc}/configure \
 	--target=${target} \
 	--disable-nls \
-	--enable-languages=c \
-	--without-headers
+	--enable-languages=c,c++ \
+	--without-headers \
+	--disable-hosted-libstdcxx
 
 make all-gcc
 make all-target-libgcc CFLAGS_FOR_TARGET='-g -O2 -mcmodel=large -mno-red-zone' -j 8
+make all-target-libstdc++-v3 CXXFLAGS_FOR_TARGET='-g -O2 -mcmodel=large -mno-red-zone' -j 8
 make install-gcc
 make install-target-libgcc
+make install-target-libstdc++-v3
 
 apk del build-base
 

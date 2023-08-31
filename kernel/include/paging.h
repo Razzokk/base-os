@@ -18,6 +18,8 @@ extern "C" {
 #define NUM_PML2_ENTRIES 512ULL
 #define NUM_PML1_ENTRIES 512ULL
 
+#define addr2page(addr, page_size) ((uintptr_t) addr / page_size)
+
 typedef struct pml4_entry
 {
 	uint64_t present			: 1;

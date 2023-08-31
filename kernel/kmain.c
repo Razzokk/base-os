@@ -9,7 +9,7 @@
 #include "rand.h"
 #include "color_palettes.h"
 #include "timer.h"
-#include "page_manager.h"
+#include "pmm.h"
 #include "kheap.h"
 
 const char LOGO[] =
@@ -75,14 +75,14 @@ noreturn void kmain(void)
 	pic_enable_irq(1); // enable keyboard interrupts
 	timer_init(20); // 20 hz
 
-	debugf("Alloced page: %d\n", alloc_page());
-	size_t page = alloc_page();
+	debugf("Alloced page: %d\n", pmm_alloc_page());
+	size_t page = pmm_alloc_page();
 	debugf("Alloced page: %d\n", page);
-	debugf("Alloced page: %d\n", alloc_page());
-	debugf("Alloced page: %d\n", alloc_page());
+	debugf("Alloced page: %d\n", pmm_alloc_page());
+	debugf("Alloced page: %d\n", pmm_alloc_page());
 	debugf("Freeing page: %d\n", page);
-	free_page(page);
-	debugf("Alloced page: %d\n", alloc_page());
+	pmm_free_page(page);
+	debugf("Alloced page: %d\n", pmm_alloc_page());
 
 	debugf("Alloced memory: %p\n", kmalloc(12, 0));
 	debugf("Alloced memory: %p\n", kmalloc(12, 0));

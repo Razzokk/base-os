@@ -40,5 +40,5 @@ void kheap_init(void* start, size_t cap)
 
 	debugf(DBG_GREEN "Initialize kernel heap:\n", 0);
 	debugf("Kernel heap start address: %p\n", heap_start);
-	debugf("Kernel heap capacity: %d bytes\n", capacity);
+	debugf("Kernel heap capacity:      %d bytes\n", capacity);
 }

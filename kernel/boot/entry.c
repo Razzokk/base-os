@@ -4,7 +4,7 @@
 #include "debug.h"
 #include "memory.h"
 #include "paging.h"
-#include "page_manager.h"
+#include "pmm.h"
 #include "kheap.h"
 #include "string.h"
 
@@ -17,37 +17,31 @@ extern void* kernel_end_;
 void* kernel_start_address = &kernel_start_;
 void* kernel_end_address = &kernel_end_;
 
-static size_t biggest_usable_block_size = 0;
-static void* biggest_usable_block_address = NULL;
+static const multiboot_mmap_tag* mmap_info = NULL;
 
 void handle_multiboot_mmap_tag(const multiboot_mmap_tag* tag)
 {
-	const multiboot_mmap_entry* entry = tag->entries;
 	debugf("MMap entries (entry size: %d bytes):\n", tag->entry_size);
 	size_t num_blocks = 0;
 	size_t num_usable_blocks = 0;
+	void* tag_end = (void*) offset_pointer(tag, tag->tag.size);
 
-	while ((uintptr_t) entry < ((uintptr_t) tag) + tag->tag.size)
+	for (const multiboot_mmap_entry* entry = tag->entries;
+	(void*) entry < tag_end;
+	entry = (const multiboot_mmap_entry*) align_up(offset_pointer(entry, tag->entry_size), MULTIBOOT_TAG_ALIGN))
 	{
-		debugf("- Base addr:	%p\n", entry->base_address);
-		debugf("  Type:		%d\n", entry->type);
-		debugf("  Length:	%d bytes\n", entry->length);
+		debugf("- Base addr: %p\n", entry->base_address);
+		debugf("  Type:      %d\n", entry->type);
+		debugf("  Length:    %d bytes\n", entry->length);
 		++num_blocks;
 
 		if (entry->type == MULTIBOOT_MEMORY_MAP_AVAILABLE)
-		{
 			++num_usable_blocks;
-			if (entry->length > biggest_usable_block_size)
-			{
-				biggest_usable_block_size = entry->length;
-				biggest_usable_block_address = entry->base_address;
-			}
-		}
-
-		entry = (const multiboot_mmap_entry*) align_up(((uintptr_t) entry) + tag->entry_size, MULTIBOOT_TAG_ALIGN);
 	}
 
-	debugf("Summary: Number of blocks: %d, Number of usable blocks: %d\n", num_blocks, num_usable_blocks);
+	debug_literal("Summary:\n");
+	debugf("- Number of blocks:        %d\n", num_blocks);
+	debugf("- Number of usable blocks: %d\n", num_usable_blocks);
 }
 
 void handle_multiboot_tag(const multiboot_tag* tag)
@@ -58,10 +52,11 @@ void handle_multiboot_tag(const multiboot_tag* tag)
 			debugf("Command Line: %s\n", ((const multiboot_cmd_line_tag*) tag)->string);
 			break;
 		case MULTIBOOT_TAG_TYPE_BOOT_LOADER_NAME:
-			debugf("Boot loader name: %s\n", ((const multiboot_cmd_line_tag*) tag)->string);
+			debugf("Boot loader name: %s\n", ((const multiboot_load_name_tag*) tag)->string);
 			break;
 		case MULTIBOOT_TAG_TYPE_MMAP:
-			handle_multiboot_mmap_tag((const multiboot_mmap_tag*) tag);
+			mmap_info = (const multiboot_mmap_tag*) tag;
+			handle_multiboot_mmap_tag(mmap_info);
 			break;
 	}
 }
@@ -71,25 +66,23 @@ void parse_multiboot(const multiboot_info_struct* mboot_info)
 	debug_literal(DBG_GREEN "Parsing Multiboot info structure...\n");
 	debugf("Total Size: %d bytes\n", mboot_info->total_size);
 
-	const multiboot_tag* tag = align_up((const multiboot_tag*) mboot_info->tags, MULTIBOOT_TAG_ALIGN);
-
-	while (tag->type != MULTIBOOT_TAG_TYPE_END)
-	{
+	for (const multiboot_tag* tag = align_up((const multiboot_tag*) mboot_info->tags, MULTIBOOT_TAG_ALIGN);
+	tag->type != MULTIBOOT_TAG_TYPE_END;
+	tag = (const multiboot_tag*) align_up(offset_pointer(tag, tag->size), MULTIBOOT_TAG_ALIGN))
 		handle_multiboot_tag(tag);
-		tag = (const multiboot_tag*) align_up((uintptr_t) tag + tag->size, MULTIBOOT_TAG_ALIGN);
-	}
 
 	debug_literal(DBG_GREEN "Parsing Multiboot info structure done.\n");
 }
 
 void entry(uint32_t mboot_magic, const multiboot_info_struct* mboot_info)
 {
-	mboot_info = (const multiboot_info_struct*) ((uintptr_t) mboot_info + KERNEL_VMA);
+	mboot_info = (const multiboot_info_struct*) P2V(mboot_info);
 
 	if (mboot_magic == MULTIBOOT2_LOADER_MAGIC)
 	{
 		debugf(DBG_GREEN "Multiboot loader magic matches => %x\n", MULTIBOOT2_LOADER_MAGIC);
-	} else
+	}
+	else
 	{
 		debug_literal(DBG_RED "Multiboot loader magic wrong!\n");
 		debugf("Expected: %d, was: %d\n", MULTIBOOT2_LOADER_MAGIC, mboot_magic);
@@ -101,11 +94,18 @@ void entry(uint32_t mboot_magic, const multiboot_info_struct* mboot_info)
 	debugf(DBG_GREEN "Kernel start address:          %p\n", kernel_start_address);
 	debugf(DBG_GREEN "Kernel end address:            %p\n", kernel_end_address);
 
-	parse_multiboot(mboot_info);
+	debug_literal("Copy multiboot info struct to end of kernel...\n");
 
-	size_t num_pages = align_down(biggest_usable_block_size, PAGE_SIZE) / PAGE_SIZE;
-	size_t start_page = ((uintptr_t) align_up(biggest_usable_block_address, PAGE_SIZE)) / PAGE_SIZE;
-	void* end_ = page_manager_init(num_pages, start_page);
+	memcpy(kernel_end_address, mboot_info, mboot_info->total_size);
+	mboot_info = kernel_end_address;
+	kernel_end_address = offset_pointer(kernel_end_address, mboot_info->total_size);
+
+	debugf(DBG_GREEN "New multiboot info struct address: %p\n", mboot_info);
+	debugf(DBG_GREEN "New kernel end address:            %p\n", kernel_end_address);
+	debug_literal("Copy multiboot info struct to end of kernel done.\n");
+
+	parse_multiboot(mboot_info);
+	void* end_ = pmm_init(mmap_info);
 
 	void* heap = align_up(end_, PAGE_SIZE);
 	kheap_init(heap, 2 * MiB);

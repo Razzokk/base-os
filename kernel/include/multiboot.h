@@ -37,7 +37,7 @@ typedef struct multiboot_tag
 	uint32_t size;
 } __attribute__((packed)) multiboot_tag;
 
-typedef struct multiboot_info
+typedef struct multiboot_info_struct
 {
 	uint32_t total_size;
 	uint32_t reserved;

@@ -65,6 +65,7 @@ setup_page_tables:
     ; map pml2 entries to 2MiB pages
     mov ecx, 0  ; counter
 
+; map a single pml2 huge page (2 MiB)
 .map_pml2:
     mov eax, 0x200000   ; 2MiB
     mul ecx
@@ -74,7 +75,7 @@ setup_page_tables:
 	[warning *number-overflow]
 
     inc ecx         ; inc counter
-    cmp ecx, 512    ; check if all pages are mapped
+    cmp ecx, 1		; check if all pages are mapped
     jne .map_pml2   ; if not continue mapping
 
     ret
